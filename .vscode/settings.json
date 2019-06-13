@@ -1,5 +1,5 @@
 {
-  "python.linting.pylintEnabled": true,
+  "python.linting.pylintEnabled": false,
   "python.linting.enabled": true,
   "python.pythonPath": "/Users/dan/codes/myproject/venv/bin/python"
 }
