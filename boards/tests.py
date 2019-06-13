@@ -6,13 +6,19 @@ from .views import home, board_topics
 
 
 class HomeTests(TestCase):
+    def setUp(self):
+        Board.objects.create(name='Django', description='Django board.')
+        self.response = self.client.get('/')
+
     def test_home_view_status_code(self):
-        response = self.client.get('/')
-        self.assertEquals(response.status_code, 200)
+        self.assertEquals(self.response.status_code, 200)
 
     def test_home_url_resolves_home_view(self):
         view = resolve('/')
         self.assertEquals(view.func, home)
+
+    def test_home_view_contains_link_to_topics(self):
+        self.assertContains(self.response, 'href="/boards/1/"')
 
 
 class BoardTopicsTests(TestCase):
@@ -30,3 +36,7 @@ class BoardTopicsTests(TestCase):
     def test_board_topics_url_resolves_topics_view(self):
         view = resolve('/boards/1/')
         self.assertEqual(view.func, board_topics)
+
+    def test_board_topics_view_contains_link_to_home(self):
+        response = self.client.get('/boards/1/')
+        self.assertContains(response, 'href="/"')

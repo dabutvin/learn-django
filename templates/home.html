@@ -26,8 +26,8 @@
                 {% for board in boards %}
                 <tr>
                     <td>
-                        {{ board.name }}
-                        <small class="text-muted d-block">{{ board.description }}</small>
+                        <a href="/boards/{{ board.pk }}/">{{ board.name }}</a>
+                        <small class=" text-muted d-block">{{ board.description }}</small>
                     </td>
                     <td class="align-middle">0</td>
                     <td class="align-middle">0</td>
