@@ -1,13 +1,15 @@
 {% extends 'base.html' %}
 
+{% load widget_tweaks %}
+
 {% block title %}
-New topic - {{ board.name }} - {{ block.super }}
+    New topic - {{ board.name }} - {{ block.super }}
 {% endblock %}
 
 {% block breadcrumb %}
-<li class="breadcrumb-item"><a href="/">Boards</a></li>
-<li class="breadcrumb-item"><a href="/boards/{{ board.pk }}/">{{ board.name }}</a></li>
-<li class="breadcrumb-item active">New topic</li>
+    <li class="breadcrumb-item"><a href="/">Boards</a></li>
+    <li class="breadcrumb-item"><a href="/boards/{{ board.pk }}/">{{ board.name }}</a></li>
+    <li class="breadcrumb-item active">New topic</li>
 {% endblock %}
 
 {% block content %}
@@ -16,7 +18,30 @@ New topic - {{ board.name }} - {{ block.super }}
         <h1>New topic for <u>{{ board.name }}</u></h1>
         <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+
+                    {% if form.is_bound %}
+                        {% if field.errors %}
+                            {% render_field field class="form-control is-invalid" %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            {% render_field field class="form-control is-valid" %}
+                        {% endif %}
+                    {% else %}
+                        {% render_field field class="form-control" %}
+                    {% endif %}
+                    {% if field.help_text %}
+                        <small class="form-text">{{ field.help_text }}</small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+
             <button class="btn btn-success" type="submit">Post</button>
         </form>
     </div>
