@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from django.urls import resolve
 from django.test import TestCase
 
+from .forms import NewTopicForm
 from .models import Board, Topic, Post
 from .views import home, board_topics, new_topic
 
@@ -66,6 +67,11 @@ class NewTopicTests(TestCase):
         response = self.client.get('/boards/1/new/')
         self.assertContains(response, 'href="/boards/1/"')
 
+    def test_new_topic_view_contains_form(self):
+        response = self.client.get('/boards/1/new/')
+        form = response.context.get('form')
+        self.assertIsInstance(form, NewTopicForm)
+
     def test_csrf_present(self):
         response = self.client.get('/boards/1/new/')
         self.assertContains(response, '"csrfmiddlewaretoken"')
@@ -76,18 +82,21 @@ class NewTopicTests(TestCase):
             'message': 'New message'
         }
         response = self.client.post('/boards/1/new/', data=data)
+
+        self.assertEquals(response.status_code, 302)
         self.assertTrue(Topic.objects.exists())
         self.assertTrue(Post.objects.exists())
 
     def test_post_invalid_data(self):
         data = {}
         response = self.client.post('/boards/1/new/', data=data)
+        form = response.context.get('form')
 
         # TODO: will the data exist across tests?
         self.assertFalse(Topic.objects.exists())
         self.assertFalse(Post.objects.exists())
-
         self.assertEquals(response.status_code, 200)
+        self.assertTrue(form.errors)
 
     def test_post_invalid_missing_data(self):
         data = {

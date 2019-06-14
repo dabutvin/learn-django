@@ -1,7 +1,5 @@
 {% extends 'base.html' %}
 
-{% load widget_tweaks %}
-
 {% block title %}
     New topic - {{ board.name }} - {{ block.super }}
 {% endblock %}
@@ -13,37 +11,14 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col col-md-8">
-        <h1>New topic for <u>{{ board.name }}</u></h1>
-        <form method="POST">
-            {% csrf_token %}
-            {% for field in form %}
-                <div class="form-group">
-                    {{ field.label_tag }}
-
-                    {% if form.is_bound %}
-                        {% if field.errors %}
-                            {% render_field field class="form-control is-invalid" %}
-                            {% for error in field.errors %}
-                                <div class="invalid-feedback">
-                                    {{ error }}
-                                </div>
-                            {% endfor %}
-                        {% else %}
-                            {% render_field field class="form-control is-valid" %}
-                        {% endif %}
-                    {% else %}
-                        {% render_field field class="form-control" %}
-                    {% endif %}
-                    {% if field.help_text %}
-                        <small class="form-text">{{ field.help_text }}</small>
-                    {% endif %}
-                </div>
-            {% endfor %}
-
-            <button class="btn btn-success" type="submit">Post</button>
-        </form>
+    <div class="row">
+        <div class="col col-md-8">
+            <h1>New topic for <u>{{ board.name }}</u></h1>
+            <form method="POST">
+                {% csrf_token %}
+                {% include 'includes/form.html' %}
+                <button class="btn btn-success" type="submit">Post</button>
+            </form>
+        </div>
     </div>
-</div>
 {% endblock %}
