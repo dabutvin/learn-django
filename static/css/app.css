@@ -1,3 +1,10 @@
-.navbar-brand {
+.navbar-brand,
+.logo {
   font-family: 'Libre Baskerville', serif;
+}
+
+.signup-body {
+  /* Background pattern from Toptal Subtle Patterns */
+  background-image: url(../img/email-pattern.png);
+  padding: 60px;
 }
