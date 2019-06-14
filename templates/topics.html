@@ -10,6 +10,29 @@
 {% endblock %}
 
 {% block content %}
-<a class="btn btn-secondary float-right" href="/boards/{{board.pk}}/new">New topic</a>
-<p>content</p>
+<div class="mb-4">
+    <a class="btn btn-secondary" href="/boards/{{board.pk}}/new">New topic</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Topic</th>
+            <th>Starter</th>
+            <th>Replies</th>
+            <th>Views</th>
+            <th>Last update</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topic in board.topics.all %}
+        <tr>
+            <td>{{ topic.subject }}</td>
+            <td>{{ topic.starter.username }}</td>
+            <td>0</td>
+            <td>0</td>
+            <td>{{ topic.last_updated }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

@@ -1,7 +1,8 @@
+from django.contrib.auth.models import User
 from django.urls import resolve
 from django.test import TestCase
 
-from .models import Board
+from .models import Board, Topic, Post
 from .views import home, board_topics, new_topic
 
 
@@ -37,14 +38,17 @@ class BoardTopicsTests(TestCase):
         view = resolve('/boards/1/')
         self.assertEqual(view.func, board_topics)
 
-    def test_board_topics_view_contains_link_to_home(self):
+    def test_board_topics_view_contains_navigation(self):
         response = self.client.get('/boards/1/')
         self.assertContains(response, 'href="/"')
+        self.assertContains(response, 'href="/boards/1/new"')
 
 
 class NewTopicTests(TestCase):
     def setUp(self):
         Board.objects.create(name='Django', description='Django board.')
+        User.objects.create(
+            username='john', email='john@doe.com', password='123')
 
     def test_new_topic_view_success_status_code(self):
         response = self.client.get('/boards/1/new/')
@@ -61,3 +65,39 @@ class NewTopicTests(TestCase):
     def test_new_topic_view_contains_link_to_board(self):
         response = self.client.get('/boards/1/new/')
         self.assertContains(response, 'href="/boards/1/"')
+
+    def test_csrf_present(self):
+        response = self.client.get('/boards/1/new/')
+        self.assertContains(response, '"csrfmiddlewaretoken"')
+
+    def test_post_valid_data(self):
+        data = {
+            'subject': 'New subject',
+            'message': 'New message'
+        }
+        response = self.client.post('/boards/1/new/', data=data)
+        self.assertTrue(Topic.objects.exists())
+        self.assertTrue(Post.objects.exists())
+
+    def test_post_invalid_data(self):
+        data = {}
+        response = self.client.post('/boards/1/new/', data=data)
+
+        # TODO: will the data exist across tests?
+        self.assertFalse(Topic.objects.exists())
+        self.assertFalse(Post.objects.exists())
+
+        self.assertEquals(response.status_code, 200)
+
+    def test_post_invalid_missing_data(self):
+        data = {
+            'subject': '',
+            'message': ''
+        }
+        response = self.client.post('/boards/1/new/', data=data)
+
+        # TODO: will the data exist across tests?
+        self.assertFalse(Topic.objects.exists())
+        self.assertFalse(Post.objects.exists())
+
+        self.assertEquals(response.status_code, 200)
