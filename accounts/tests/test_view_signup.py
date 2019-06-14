@@ -2,8 +2,8 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import resolve
 
-from .forms import SignUpForm
-from .views import signup
+from ..forms import SignUpForm
+from ..views import signup
 
 
 class SignUpTests(TestCase):
